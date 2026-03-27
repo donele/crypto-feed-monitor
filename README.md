@@ -1,6 +1,6 @@
 # sgt-dashboard
 
-Dash-based monitoring dashboard for market data published into SGT shared memory.
+Dash-based monitoring dashboard for real-time market data streamed from exchanges and published into SGT shared memory.
 
 ## Package contents
 
@@ -10,7 +10,7 @@ Dash-based monitoring dashboard for market data published into SGT shared memory
 ## Install
 
 ```bash
-cd ~/repos/sgt-dashboard
+cd <your-repo-root>/sgt-dashboard
 python3 -m pip install -e .
 ```
 
@@ -18,8 +18,8 @@ python3 -m pip install -e .
 
 ```bash
 sgt-shm-dash \
-  --pathname /node_data/shm/datashm \
-  --refdata /home/jdlee/workspace/refdata/crypto_symbology/refdata.latest.json \
+  --pathname <shm-pathname> \
+  --refdata <path-to-refdata>/refdata.latest.json \
   --host 127.0.0.1 \
   --port 8060 \
   --title "Price Monitor"
@@ -28,7 +28,7 @@ sgt-shm-dash \
 ## Run reader directly
 
 ```bash
-sgt-shm-reader --pathname /node_data/shm/datashm --refdata /path/to/refdata.json
+sgt-shm-reader --pathname <shm-pathname> --refdata /path/to/refdata.json
 ```
 
 ## Notes
@@ -55,7 +55,7 @@ sgt-shm-reader --pathname /node_data/shm/datashm --refdata /path/to/refdata.json
 ## Testing
 
 ```bash
-cd ~/repos/sgt-dashboard
+cd <your-repo-root>/sgt-dashboard
 python3 -m pip install -r requirements.txt
 python3 -m pytest -q
 ```
