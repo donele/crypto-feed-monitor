@@ -241,14 +241,39 @@ def _aggregate_trade_notional_bucket(trade_ts: List[float], trade_px: List[float
 def build_app(state: StreamState, title: str) -> Dash:
     app = Dash(__name__)
     app.title = title
+    app.index_string = """<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            background: #0B1220;
+            color: #E5E7EB;
+          }
+        </style>
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>"""
 
     app.layout = html.Div(
-        style={"fontFamily": "Helvetica, Arial, sans-serif", "margin": "14px"},
+        style={"fontFamily": "'Segoe UI', 'IBM Plex Sans', Helvetica, Arial, sans-serif", "margin": "14px", "padding": "12px", "background": "linear-gradient(180deg, #0B1220 0%, #111A2B 100%)", "minHeight": "100vh"},
         children=[
-            html.H3(title, style={"margin": 0}),
-            html.Div(id="status", style={"marginTop": "8px", "marginBottom": "8px"}),
+            html.H3(title, style={"margin": 0, "color": "#E2E8F0", "letterSpacing": "0.2px"}),
+            html.Div(id="status", style={"marginTop": "10px", "marginBottom": "10px", "padding": "8px 12px", "background": "#121A2B", "border": "1px solid #27334A", "borderRadius": "12px", "color": "#D7E2F0", "boxShadow": "0 8px 22px rgba(2, 6, 23, 0.45)"}),
             html.Div(
-                style={"display": "flex", "alignItems": "center", "gap": "10px", "marginBottom": "6px"},
+                style={"display": "flex", "alignItems": "center", "gap": "10px", "marginBottom": "10px"},
                 children=[
                     dcc.Dropdown(
                         id="window-select",
@@ -258,13 +283,13 @@ def build_app(state: StreamState, title: str) -> Dash:
                         ],
                         value="1m",
                         clearable=False,
-                        style={"width": "110px"},
+                        style={"width": "110px", "borderRadius": "10px"},
                     ),
-                    dcc.Dropdown(id="symbol", options=[], value=None, clearable=False, style={"width": "420px"}),
+                    dcc.Dropdown(id="symbol", options=[], value=None, clearable=False, style={"width": "420px", "borderRadius": "10px"}),
                 ],
             ),
-            dcc.Graph(id="price-graph", style={"height": "72vh"}),
-            dcc.Graph(id="overview-graph", style={"height": "72vh", "display": "none"}),
+            dcc.Graph(id="price-graph", style={"height": "72vh", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}),
+            dcc.Graph(id="overview-graph", style={"height": "72vh", "display": "none", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}),
             dcc.Interval(id="tick", interval=500, n_intervals=0),
         ],
     )
@@ -288,11 +313,11 @@ def build_app(state: StreamState, title: str) -> Dash:
 
         if not symbols:
             fig = go.Figure()
-            fig.update_layout(template="plotly_white", title="Waiting for events from SHM...")
+            fig.update_layout(template="plotly_white", title="Waiting for events from SHM...", paper_bgcolor="#0F172A", plot_bgcolor="#111827", font={"color": "#D7E2F0"})
             status = "events=0 | waiting for first packet"
             if window_sel == "10m":
-                return options, None, status, fig, fig, {"height": "72vh", "display": "none"}, {"height": "72vh"}
-            return options, None, status, fig, fig, {"height": "72vh"}, {"height": "72vh", "display": "none"}
+                return options, None, status, fig, fig, {"height": "72vh", "display": "none", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}, {"height": "72vh", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}
+            return options, None, status, fig, fig, {"height": "72vh", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}, {"height": "72vh", "display": "none", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}
 
         if selected not in symbols:
             selected = symbols[0]
@@ -333,24 +358,29 @@ def build_app(state: StreamState, title: str) -> Dash:
         )
 
         if bid_t:
-            fig.add_trace(go.Scatter(x=bid_x, y=bid_p, mode="lines", name="bid", line={"width": 1.8, "shape": "hv"}), row=1, col=1)
+            fig.add_trace(go.Scatter(x=bid_x, y=bid_p, mode="lines", name="bid", line={"width": 2.0, "shape": "hv", "color": "#2DD4BF"}), row=1, col=1)
         if ask_t:
-            fig.add_trace(go.Scatter(x=ask_x, y=ask_p, mode="lines", name="ask", line={"width": 1.8, "shape": "hv"}), row=1, col=1)
+            fig.add_trace(go.Scatter(x=ask_x, y=ask_p, mode="lines", name="ask", line={"width": 2.0, "shape": "hv", "color": "#FB7185"}), row=1, col=1)
         if trd_t:
-            fig.add_trace(go.Scatter(x=trd_x, y=trd_p, mode="markers", name="trades", marker={"size": 5}), row=1, col=1)
+            fig.add_trace(go.Scatter(x=trd_x, y=trd_p, mode="markers", name="trades", marker={"size": 5, "color": "#60A5FA", "opacity": 0.8}), row=1, col=1)
 
         if bar_x:
-            fig.add_trace(go.Bar(x=bar_x, y=bar_y, name="trade notional USD / 1s", width=1000, marker={"color": "#AB63FA"}), row=2, col=1)
+            fig.add_trace(go.Bar(x=bar_x, y=bar_y, name="trade notional USD / 1s", width=1000, marker={"color": "#60A5FA", "opacity": 0.85}), row=2, col=1)
 
         fig.update_layout(
             template="plotly_white",
+            paper_bgcolor="#0F172A",
+            plot_bgcolor="#111827",
+            font={"color": "#D7E2F0"},
             margin={"l": 40, "r": 10, "t": 30, "b": 40},
-            legend={"orientation": "h"},
+            legend={"orientation": "h", "y": 1.03, "x": 0.0, "bgcolor": "rgba(17,24,39,0.75)"},
+            hovermode="x unified",
             xaxis={"range": [cutoff_dt, latest_dt], "tickformat": "%H:%M:%S"},
             xaxis2={"range": [cutoff_dt, latest_dt], "tickformat": "%H:%M:%S", "title": "time"},
         )
-        fig.update_yaxes(title_text="price", row=1, col=1)
-        fig.update_yaxes(title_text="notional USD", row=2, col=1)
+        fig.update_yaxes(title_text="price", row=1, col=1, gridcolor="#243042", zeroline=False)
+        fig.update_yaxes(title_text="notional USD", row=2, col=1, gridcolor="#243042", zeroline=False)
+        fig.update_xaxes(showgrid=True, gridcolor="#1F2A3D")
 
         # 10m chart
         overview_window_sec = 600.0
@@ -378,19 +408,24 @@ def build_app(state: StreamState, title: str) -> Dash:
         )
 
         if mid_x:
-            overview_fig.add_trace(go.Scatter(x=mid_x, y=mid_p, mode="lines", name="mid", line={"width": 1.8, "shape": "hv"}), row=1, col=1)
+            overview_fig.add_trace(go.Scatter(x=mid_x, y=mid_p, mode="lines", name="mid", line={"width": 2.0, "shape": "hv", "color": "#93C5FD"}), row=1, col=1)
         if vol_x:
-            overview_fig.add_trace(go.Bar(x=vol_x, y=vol_y, name="notional USD / 10s", width=overview_bucket_sec * 1000, marker={"color": "#AB63FA"}), row=2, col=1)
+            overview_fig.add_trace(go.Bar(x=vol_x, y=vol_y, name="notional USD / 10s", width=overview_bucket_sec * 1000, marker={"color": "#60A5FA", "opacity": 0.85}), row=2, col=1)
 
         overview_fig.update_layout(
             template="plotly_white",
+            paper_bgcolor="#0F172A",
+            plot_bgcolor="#111827",
+            font={"color": "#D7E2F0"},
             margin={"l": 40, "r": 10, "t": 30, "b": 40},
-            legend={"orientation": "h"},
+            legend={"orientation": "h", "y": 1.03, "x": 0.0, "bgcolor": "rgba(17,24,39,0.75)"},
+            hovermode="x unified",
             xaxis={"range": [overview_cutoff_dt, latest_dt], "tickformat": "%H:%M:%S"},
             xaxis2={"range": [overview_cutoff_dt, latest_dt], "tickformat": "%H:%M:%S", "title": "time"},
         )
-        overview_fig.update_yaxes(title_text="mid price", row=1, col=1)
-        overview_fig.update_yaxes(title_text="notional USD", row=2, col=1)
+        overview_fig.update_yaxes(title_text="mid price", row=1, col=1, gridcolor="#243042", zeroline=False)
+        overview_fig.update_yaxes(title_text="notional USD", row=2, col=1, gridcolor="#243042", zeroline=False)
+        overview_fig.update_xaxes(showgrid=True, gridcolor="#1F2A3D")
 
         active_window = 600 if window_sel == "10m" else 60
 
@@ -451,9 +486,9 @@ def build_app(state: StreamState, title: str) -> Dash:
         )
 
         if window_sel == "10m":
-            return options, selected, status, fig, overview_fig, {"height": "72vh", "display": "none"}, {"height": "72vh"}
+            return options, selected, status, fig, overview_fig, {"height": "72vh", "display": "none", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}, {"height": "72vh", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}
 
-        return options, selected, status, fig, overview_fig, {"height": "72vh"}, {"height": "72vh", "display": "none"}
+        return options, selected, status, fig, overview_fig, {"height": "72vh", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}, {"height": "72vh", "display": "none", "borderRadius": "16px", "boxShadow": "0 12px 30px rgba(2, 6, 23, 0.55)", "background": "#121A2B"}
 
     return app
 
