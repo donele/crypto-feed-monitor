@@ -3,7 +3,7 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "crypto-feed-monitor"
+name = "feed-monitor"
 version = "0.1.0"
 description = "Dash-based monitoring dashboard for SGT shared-memory market data"
 readme = "README.md"
@@ -14,8 +14,8 @@ dependencies = [
 ]
 
 [project.scripts]
-sgt-shm-dash = "sgt_dashboard.shm_dash_app:main"
-sgt-shm-reader = "sgt_dashboard.shm_direct_price_reader:main"
+sgt-shm-dash = "dashboard.shm_dash_app:main"
+sgt-shm-reader = "dashboard.shm_direct_price_reader:main"
 
 [tool.setuptools]
-packages = ["sgt_dashboard"]
+packages = ["dashboard"]

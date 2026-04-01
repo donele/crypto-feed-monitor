@@ -1,16 +1,16 @@
-# crypto-feed-monitor
+# feed-monitor
 
 Dash-based monitoring dashboard for real-time market data streamed from exchanges and published into SGT shared memory.
 
 ## Package contents
 
-- `sgt_dashboard/shm_direct_price_reader.py`: direct SysV SHM reader that streams decoded events.
-- `sgt_dashboard/shm_dash_app.py`: Dash UI for live bid/ask/trade/notional monitoring.
+- `dashboard/shm_direct_price_reader.py`: direct SysV SHM reader that streams decoded events.
+- `dashboard/shm_dash_app.py`: Dash UI for live bid/ask/trade/notional monitoring.
 
 ## Install
 
 ```bash
-cd <your-repo-root>/crypto-feed-monitor
+cd <your-repo-root>/feed-monitor
 python3 -m pip install -e .
 ```
 
@@ -55,7 +55,7 @@ sgt-shm-reader --pathname <shm-pathname> --refdata /path/to/refdata.json
 ## Testing
 
 ```bash
-cd <your-repo-root>/crypto-feed-monitor
+cd <your-repo-root>/feed-monitor
 python3 -m pip install -r requirements.txt
 python3 -m pytest -q
 ```
